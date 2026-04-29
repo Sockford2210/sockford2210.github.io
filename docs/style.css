@@ -234,6 +234,15 @@ body {
   margin-bottom: 1rem;
 }
 
+.finale__photo {
+  display: block;
+  width: min(80%, 320px);
+  margin: 0 auto 1.25rem;
+  border-radius: 1rem;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.15);
+  object-fit: cover;
+}
+
 .finale__text {
   font-size: clamp(1.3rem, 4.5vw, 1.8rem);
   font-weight: 400;
