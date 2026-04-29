@@ -8,14 +8,14 @@
 }
 
 :root {
-  --color-bg-1:       #1a0533;
-  --color-bg-2:       #2b0a4e;
-  --color-bg-alt:     #0d1f4f;
-  --color-bg-name:    #3a0a2e;
-  --color-bg-finale:  #0a2e1a;
-  --color-accent:     #f7c948;
-  --color-text:       #ffffff;
-  --color-muted:      rgba(255,255,255,0.75);
+  --color-bg-1:       #fce4ec;
+  --color-bg-2:       #fff3e0;
+  --color-bg-alt:     #ede7f6;
+  --color-bg-name:    #e8f5e9;
+  --color-bg-finale:  #e3f2fd;
+  --color-accent:     #5484a4;
+  --color-text:       #3d1f35;
+  --color-muted:      rgba(61, 31, 53, 0.6);
   --font-display:     'Dancing Script', cursive;
   --font-body:        'Lato', sans-serif;
 }
@@ -106,10 +106,10 @@ body {
 }
 
 .page--intro   { background: linear-gradient(160deg, var(--color-bg-1), var(--color-bg-2)); }
-.page--message { background: linear-gradient(160deg, #1b0840, #0d2b5e); }
-.page--alt     { background: linear-gradient(160deg, #0d2b5e, #1b0840); }
-.page--name    { background: linear-gradient(160deg, var(--color-bg-name), #1a0533); }
-.page--finale  { background: linear-gradient(160deg, var(--color-bg-finale), #0a1a3a); }
+.page--message { background: linear-gradient(160deg, var(--color-bg-2), var(--color-bg-1)); }
+.page--alt     { background: linear-gradient(160deg, var(--color-bg-alt), var(--color-bg-finale)); }
+.page--name    { background: linear-gradient(160deg, var(--color-bg-name), var(--color-bg-1)); }
+.page--finale  { background: linear-gradient(160deg, var(--color-bg-finale), var(--color-bg-alt)); }
 
 .page__content {
   max-width: 600px;
@@ -147,7 +147,7 @@ body {
   font-family: var(--font-display);
   font-size: clamp(2.5rem, 10vw, 5rem);
   color: var(--color-accent);
-  text-shadow: 0 0 30px rgba(247, 201, 72, 0.5);
+  text-shadow: 0 0 30px rgba(194, 24, 91, 0.25);
   line-height: 1.1;
 }
 
@@ -210,7 +210,7 @@ body {
   font-family: var(--font-display);
   font-size: clamp(2rem, 9vw, 4rem);
   color: var(--color-accent);
-  text-shadow: 0 0 24px rgba(247, 201, 72, 0.4);
+  text-shadow: 0 0 24px rgba(194, 24, 91, 0.2);
   margin-bottom: 0.5rem;
 }
 
@@ -226,8 +226,8 @@ body {
 .finale__title {
   font-family: var(--font-display);
   font-size: clamp(2.2rem, 9vw, 4.5rem);
-  color: var(--color-accent);
-  text-shadow: 0 0 30px rgba(247, 201, 72, 0.5);
+  color: #7b1fa2;
+  text-shadow: 0 0 30px rgba(123, 31, 162, 0.2);
   margin-bottom: 1rem;
 }
 
