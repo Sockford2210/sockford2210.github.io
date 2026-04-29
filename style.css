@@ -85,7 +85,7 @@ body {
 .scroll-container {
   position: relative;
   z-index: 1;
-  height: 100svh;           /* small viewport height — better on mobile */
+  height: 100dvh;           /* dynamic viewport height — tracks browser chrome show/hide */
   overflow-y: scroll;
   scroll-snap-type: y mandatory;
   -webkit-overflow-scrolling: touch;
@@ -96,11 +96,12 @@ body {
    ============================================= */
 .page {
   position: relative;
-  height: 100svh;
+  height: 100dvh;
   display: flex;
   align-items: center;
   justify-content: center;
   scroll-snap-align: start;
+  scroll-snap-stop: always;
   padding: 2rem 1.5rem;
   text-align: center;
 }
