@@ -1,0 +1,264 @@
+/* =============================================
+   BASE & RESET
+   ============================================= */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --color-bg-1:       #1a0533;
+  --color-bg-2:       #2b0a4e;
+  --color-bg-alt:     #0d1f4f;
+  --color-bg-name:    #3a0a2e;
+  --color-bg-finale:  #0a2e1a;
+  --color-accent:     #f7c948;
+  --color-text:       #ffffff;
+  --color-muted:      rgba(255,255,255,0.75);
+  --font-display:     'Dancing Script', cursive;
+  --font-body:        'Lato', sans-serif;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-bg-1);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  overflow-x: hidden;
+}
+
+/* =============================================
+   CONFETTI CANVAS
+   ============================================= */
+#confetti-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 100;
+}
+
+/* =============================================
+   FLOATING BALLOONS
+   ============================================= */
+.balloons {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.balloon {
+  position: absolute;
+  bottom: -10%;
+  font-size: clamp(1.8rem, 5vw, 3rem);
+  opacity: 0.55;
+  animation: floatUp linear infinite;
+  will-change: transform;
+}
+
+/* Staggered positions & speeds */
+.balloon--1 { left:  8%; animation-duration: 12s; animation-delay:  0s;   font-size: 2rem; }
+.balloon--2 { left: 22%; animation-duration: 16s; animation-delay: -4s;   font-size: 2.5rem; }
+.balloon--3 { left: 40%; animation-duration: 14s; animation-delay: -8s;   font-size: 1.8rem; }
+.balloon--4 { left: 58%; animation-duration: 18s; animation-delay: -2s;   font-size: 2.8rem; }
+.balloon--5 { left: 74%; animation-duration: 11s; animation-delay: -6s;   font-size: 2.2rem; }
+.balloon--6 { left: 88%; animation-duration: 15s; animation-delay: -10s;  font-size: 2rem; }
+
+@keyframes floatUp {
+  0%   { transform: translateY(0) rotate(-5deg); opacity: 0; }
+  10%  { opacity: 0.55; }
+  90%  { opacity: 0.55; }
+  100% { transform: translateY(-110vh) rotate(5deg); opacity: 0; }
+}
+
+/* =============================================
+   SCROLL CONTAINER & SNAP
+   ============================================= */
+.scroll-container {
+  position: relative;
+  z-index: 1;
+  height: 100svh;           /* small viewport height — better on mobile */
+  overflow-y: scroll;
+  scroll-snap-type: y mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* =============================================
+   PAGES
+   ============================================= */
+.page {
+  position: relative;
+  height: 100svh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  scroll-snap-align: start;
+  padding: 2rem 1.5rem;
+  text-align: center;
+}
+
+.page--intro   { background: linear-gradient(160deg, var(--color-bg-1), var(--color-bg-2)); }
+.page--message { background: linear-gradient(160deg, #1b0840, #0d2b5e); }
+.page--alt     { background: linear-gradient(160deg, #0d2b5e, #1b0840); }
+.page--name    { background: linear-gradient(160deg, var(--color-bg-name), #1a0533); }
+.page--finale  { background: linear-gradient(160deg, var(--color-bg-finale), #0a1a3a); }
+
+.page__content {
+  max-width: 600px;
+  width: 100%;
+}
+
+/* =============================================
+   FADE-IN ANIMATION
+   ============================================= */
+.fade-in {
+  opacity: 0;
+  transform: translateY(2rem);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.fade-in.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* =============================================
+   INTRO PAGE
+   ============================================= */
+.intro__subtitle {
+  font-family: var(--font-body);
+  font-weight: 300;
+  font-size: clamp(0.9rem, 3vw, 1.2rem);
+  color: var(--color-muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
+}
+
+.intro__title {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 10vw, 5rem);
+  color: var(--color-accent);
+  text-shadow: 0 0 30px rgba(247, 201, 72, 0.5);
+  line-height: 1.1;
+}
+
+/* =============================================
+   MESSAGE PAGES
+   ============================================= */
+.message__text {
+  font-size: clamp(1.1rem, 4vw, 1.6rem);
+  font-weight: 300;
+  line-height: 1.6;
+  color: var(--color-text);
+}
+
+.message__text--small {
+  font-size: clamp(0.9rem, 3vw, 1.2rem);
+  color: var(--color-muted);
+  margin-top: 1.25rem;
+}
+
+/* =============================================
+   CANDLE ANIMATION
+   ============================================= */
+.candle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.candle__body {
+  width: 22px;
+  height: 70px;
+  background: linear-gradient(to right, #f7e0a0, #e8c46a, #f7e0a0);
+  border-radius: 4px;
+  box-shadow: 0 0 8px rgba(247, 200, 72, 0.3);
+}
+
+.candle__flame {
+  width: 14px;
+  height: 24px;
+  background: radial-gradient(ellipse at 50% 80%, #fff700 0%, #ffaa00 40%, #ff5500 80%, transparent 100%);
+  border-radius: 50% 50% 30% 30% / 60% 60% 40% 40%;
+  box-shadow: 0 0 16px 4px rgba(255, 170, 0, 0.6);
+  animation: flicker 1.5s ease-in-out infinite alternate;
+  transform-origin: bottom center;
+  margin-bottom: 2px;
+}
+
+@keyframes flicker {
+  0%   { transform: scaleX(1)   scaleY(1)   rotate(-2deg); opacity: 1; }
+  30%  { transform: scaleX(0.9) scaleY(1.05) rotate(1deg); opacity: 0.95; }
+  60%  { transform: scaleX(1.1) scaleY(0.95) rotate(-1deg); opacity: 1; }
+  100% { transform: scaleX(0.95) scaleY(1.02) rotate(2deg); opacity: 0.9; }
+}
+
+/* =============================================
+   NAME PAGE
+   ============================================= */
+.name__text {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 9vw, 4rem);
+  color: var(--color-accent);
+  text-shadow: 0 0 24px rgba(247, 201, 72, 0.4);
+  margin-bottom: 0.5rem;
+}
+
+.name__signature {
+  font-size: clamp(0.9rem, 3vw, 1.1rem);
+  color: var(--color-muted);
+  font-style: italic;
+}
+
+/* =============================================
+   FINALE PAGE
+   ============================================= */
+.finale__title {
+  font-family: var(--font-display);
+  font-size: clamp(2.2rem, 9vw, 4.5rem);
+  color: var(--color-accent);
+  text-shadow: 0 0 30px rgba(247, 201, 72, 0.5);
+  margin-bottom: 1rem;
+}
+
+.finale__text {
+  font-size: clamp(1rem, 3.5vw, 1.4rem);
+  font-weight: 300;
+  color: var(--color-muted);
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+.finale__emoji {
+  font-size: clamp(1.5rem, 6vw, 2.5rem);
+  letter-spacing: 0.15em;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50%       { transform: scale(1.08); }
+}
+
+/* =============================================
+   TABLET & LARGER
+   ============================================= */
+@media (min-width: 600px) {
+  .page {
+    padding: 3rem 2.5rem;
+  }
+
+  .balloon--1 { font-size: 2.5rem; }
+  .balloon--2 { font-size: 3rem; }
+  .balloon--4 { font-size: 3.5rem; }
+}
