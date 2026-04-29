@@ -14,7 +14,7 @@ Animations: CSS animations over JSS where possible
 Hosting: GitHub Pages. HTTPS
 
 ## Project Structure
-birthday-site/
+docs/
 ├── index.html
 ├── style.css
 ├── script.js
