@@ -1,7 +1,7 @@
 /* =============================================
    Birthday Message — script.js
    - Intersection Observer for scroll-fade
-   - Canvas confetti burst on finale
+  - Canvas confetti burst on page 3 (Name / Candle)
    ============================================= */
 
 (function () {
@@ -21,8 +21,8 @@
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
           entry.target.classList.add('visible');
-          // Trigger confetti when the finale section becomes visible
-          if (entry.target.closest('#page-finale')) {
+          // Trigger confetti when the Name / Candle section becomes visible
+          if (entry.target.closest('#page-name')) {
             launchConfetti();
           }
         }
