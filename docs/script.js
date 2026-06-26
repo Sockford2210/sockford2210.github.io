@@ -7,6 +7,9 @@
 (function () {
   'use strict';
 
+  const HANGMAN_WORD = 'mummeltoe';
+  const MAX_MISTAKES = 7;
+
   // ── Scroll-fade via Intersection Observer ──────────────────────────────────
   const fadeEls = document.querySelectorAll('.fade-in');
 
@@ -26,6 +29,105 @@
   );
 
   fadeEls.forEach((el) => observer.observe(el));
+
+  // ── Hangman game ───────────────────────────────────────────────────────────
+  const hangmanWordEl = document.getElementById('hangman-word');
+  const hangmanStatusEl = document.getElementById('hangman-status');
+  const hangmanMistakesEl = document.getElementById('hangman-mistakes');
+  const hangmanGuessesEl = document.getElementById('hangman-guesses');
+  const hangmanKeyboardEl = document.getElementById('hangman-keyboard');
+  const hangmanResetEl = document.getElementById('hangman-reset');
+
+  let guessedLetters = new Set();
+  let mistakes = 0;
+  let gameOver = false;
+
+  if (
+    hangmanWordEl &&
+    hangmanStatusEl &&
+    hangmanMistakesEl &&
+    hangmanGuessesEl &&
+    hangmanKeyboardEl &&
+    hangmanResetEl
+  ) {
+    buildKeyboard();
+    resetGame();
+    hangmanResetEl.addEventListener('click', resetGame);
+  }
+
+  function buildKeyboard() {
+    const letters = 'abcdefghijklmnopqrstuvwxyz'.split('');
+
+    letters.forEach((letter) => {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'hangman__key';
+      button.textContent = letter.toUpperCase();
+      button.dataset.letter = letter;
+      button.addEventListener('click', () => handleGuess(letter));
+      hangmanKeyboardEl.appendChild(button);
+    });
+  }
+
+  function handleGuess(letter) {
+    if (gameOver || guessedLetters.has(letter)) {
+      return;
+    }
+
+    guessedLetters.add(letter);
+
+    if (!HANGMAN_WORD.includes(letter)) {
+      mistakes += 1;
+    }
+
+    updateGame();
+  }
+
+  function resetGame() {
+    guessedLetters = new Set();
+    mistakes = 0;
+    gameOver = false;
+    updateGame();
+  }
+
+  function updateGame() {
+    const solved = HANGMAN_WORD.split('').every((letter) => guessedLetters.has(letter));
+    const guessedList = Array.from(guessedLetters).sort();
+
+    hangmanWordEl.innerHTML = HANGMAN_WORD
+      .split('')
+      .map((letter) => {
+        const revealed = guessedLetters.has(letter) || gameOver;
+        return '<span class="hangman__letter">' + (revealed ? letter.toUpperCase() : '&nbsp;') + '</span>';
+      })
+      .join('');
+
+    hangmanMistakesEl.textContent = String(mistakes);
+    hangmanGuessesEl.textContent = guessedList.length
+      ? 'Guessed letters: ' + guessedList.map((letter) => letter.toUpperCase()).join(', ')
+      : 'Guessed letters: none yet';
+
+    if (solved) {
+      gameOver = true;
+      hangmanStatusEl.textContent = 'You got it. MUMMELTOE unlocked the finale.';
+    } else if (mistakes >= MAX_MISTAKES) {
+      gameOver = true;
+      hangmanStatusEl.textContent = 'Out of guesses. The word was MUMMELTOE.';
+    } else {
+      hangmanStatusEl.textContent = 'Guess the birthday word.';
+    }
+
+    updateKeyboardState();
+  }
+
+  function updateKeyboardState() {
+    const keys = hangmanKeyboardEl.querySelectorAll('.hangman__key');
+
+    keys.forEach((button) => {
+      const { letter } = button.dataset;
+      button.disabled = gameOver || guessedLetters.has(letter);
+    });
+  }
 
   // ── Confetti ───────────────────────────────────────────────────────────────
   let confettiRunning = false;

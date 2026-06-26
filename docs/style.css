@@ -8,11 +8,12 @@
 }
 
 :root {
-  --color-bg-1:       #fce4ec;
-  --color-bg-2:       #fff3e0;
-  --color-bg-alt:     #ede7f6;
-  --color-bg-name:    #e8f5e9;
-  --color-bg-finale:  #e3f2fd;
+  --color-bg-pink:    #ffd9e8;
+  --color-bg-yellow:  #fff3b8;
+  --color-bg-blue:    #dff4ff;
+  --color-bg-cream:   #fffaf0;
+  --color-bg-blush:   #ffe9f2;
+  --color-bg-sky:     #edf8ff;
   --color-accent:     #1a5276;  /* darkened for WCAG AA contrast on pastels */
   --color-text:       #1a0a14;  /* near-black for maximum contrast */
   --color-muted:      #4a2040;  /* solid dark plum — no opacity fade */
@@ -26,7 +27,7 @@ html {
 }
 
 body {
-  background: var(--color-bg-1);
+  background: linear-gradient(180deg, var(--color-bg-pink), var(--color-bg-yellow), var(--color-bg-blue));
   color: var(--color-text);
   font-family: var(--font-body);
   overflow-x: hidden;
@@ -106,11 +107,12 @@ body {
   text-align: center;
 }
 
-.page--intro   { background: linear-gradient(160deg, var(--color-bg-1), var(--color-bg-2)); }
-.page--message { background: linear-gradient(160deg, var(--color-bg-2), var(--color-bg-1)); }
-.page--alt     { background: linear-gradient(160deg, var(--color-bg-alt), var(--color-bg-finale)); }
-.page--name    { background: linear-gradient(160deg, var(--color-bg-name), var(--color-bg-1)); }
-.page--finale  { background: linear-gradient(160deg, var(--color-bg-finale), var(--color-bg-alt)); }
+.page--intro   { background: linear-gradient(160deg, var(--color-bg-pink), var(--color-bg-yellow)); }
+.page--message { background: linear-gradient(160deg, var(--color-bg-yellow), var(--color-bg-blue)); }
+.page--alt     { background: linear-gradient(160deg, var(--color-bg-blue), var(--color-bg-blush)); }
+.page--name    { background: linear-gradient(160deg, var(--color-bg-blush), var(--color-bg-cream)); }
+.page--game    { background: linear-gradient(160deg, var(--color-bg-yellow), var(--color-bg-sky)); }
+.page--finale  { background: linear-gradient(160deg, var(--color-bg-sky), var(--color-bg-pink)); }
 
 .page__content {
   max-width: 600px;
@@ -224,6 +226,126 @@ body {
 }
 
 /* =============================================
+   HANGMAN PAGE
+   ============================================= */
+.game__eyebrow {
+  font-size: clamp(0.82rem, 2.8vw, 1.1rem);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--color-muted);
+  margin-bottom: 0.35rem;
+}
+
+.game__title {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 8.5vw, 4.2rem);
+  color: var(--color-accent);
+  line-height: 0.95;
+  margin-bottom: 0.45rem;
+}
+
+.game__intro {
+  font-size: clamp(0.95rem, 3.3vw, 1.2rem);
+  line-height: 1.45;
+  color: var(--color-text);
+  margin: 0 auto 0.9rem;
+  max-width: 24rem;
+}
+
+.hangman {
+  background: rgba(255, 250, 240, 0.72);
+  border: 2px solid rgba(26, 82, 118, 0.14);
+  border-radius: 1.5rem;
+  box-shadow: 0 16px 40px rgba(26, 82, 118, 0.12);
+  padding: 0.95rem 0.9rem;
+  backdrop-filter: blur(6px);
+}
+
+.hangman__status,
+.hangman__mistakes,
+.hangman__guesses {
+  font-size: clamp(0.95rem, 3.2vw, 1.15rem);
+  line-height: 1.6;
+}
+
+.hangman__status {
+  min-height: 2.2rem;
+  font-weight: 400;
+  color: var(--color-accent);
+}
+
+.hangman__mistakes {
+  margin-top: 0.25rem;
+  color: var(--color-muted);
+}
+
+.hangman__word {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.4rem;
+  margin: 0.85rem 0;
+}
+
+.hangman__letter {
+  min-width: 1.6rem;
+  padding-bottom: 0.15rem;
+  border-bottom: 3px solid rgba(26, 82, 118, 0.45);
+  font-size: clamp(1.2rem, 5vw, 1.8rem);
+  font-weight: 700;
+  color: var(--color-text);
+  text-transform: uppercase;
+}
+
+.hangman__guesses {
+  min-height: 2.2rem;
+  color: var(--color-muted);
+  margin-bottom: 0.75rem;
+}
+
+.hangman__keyboard {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 0.4rem;
+}
+
+.hangman__key,
+.hangman__reset {
+  border: 0;
+  border-radius: 999px;
+  font: inherit;
+}
+
+.hangman__key {
+  min-height: 2.25rem;
+  background: #ffffff;
+  color: var(--color-accent);
+  font-size: 0.92rem;
+  font-weight: 700;
+  box-shadow: 0 8px 18px rgba(26, 82, 118, 0.12);
+}
+
+.hangman__key:disabled {
+  background: rgba(255, 255, 255, 0.55);
+  color: rgba(26, 82, 118, 0.55);
+  box-shadow: none;
+}
+
+.hangman__reset {
+  margin-top: 0.75rem;
+  padding: 0.7rem 1.25rem;
+  background: var(--color-accent);
+  color: #fffaf6;
+  font-weight: 700;
+}
+
+.hangman__key:focus-visible,
+.hangman__reset:focus-visible {
+  outline: 3px solid rgba(255, 105, 135, 0.45);
+  outline-offset: 2px;
+}
+
+/* =============================================
    FINALE PAGE
    ============================================= */
 .finale__title {
@@ -268,6 +390,14 @@ body {
 @media (min-width: 600px) {
   .page {
     padding: 3rem 2.5rem;
+  }
+
+  .hangman {
+    padding: 1.75rem;
+  }
+
+  .hangman__keyboard {
+    grid-template-columns: repeat(9, minmax(0, 1fr));
   }
 
   .balloon--1 { font-size: 2.5rem; }

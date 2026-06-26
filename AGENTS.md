@@ -2,9 +2,11 @@
 This project is a Single Page Application to display a personalised birthday message, which will be composed of multiple 'message pages' which the user can scroll through. This is a mobile/tablet first SPA.
 
 ## Features
-Scroll‑fade messages
+Scroll-fade messages
+Light/pastel background colours
 Floating balloons in background
 Candle or handwritten name
+Penultimate Screen contains a hangman style game containing the word 'mummeltoe'
 Confetti burst on final screen
 
 # Technical Details
