@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Lato:wght@300;400&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css?v=1.2" />
+  <link rel="stylesheet" href="style.css?v=1.4" />
 </head>
 <body>
 
@@ -24,6 +24,10 @@
   <!-- Confetti canvas (triggered on finale) -->
   <canvas id="confetti-canvas" aria-hidden="true"></canvas>
 
+  <div class="scroll-indicator" id="scroll-indicator" aria-hidden="true">
+    <span class="scroll-indicator__arrow">↓</span>
+  </div>
+
   <!-- Scroll container -->
   <main class="scroll-container">
 
@@ -31,7 +35,7 @@
     <section class="page page--intro" id="page-intro">
       <div class="page__content fade-in">
         <p class="intro__subtitle">Today is a very special day…</p>
-        <h1 class="intro__title">Happy Birthday Dada! 🎂</h1>
+        <h1 class="intro__title">Happy Birthday Mum! 🎂</h1>
       </div>
     </section>
 
@@ -54,19 +58,22 @@
           <div class="candle__flame"></div>
           <div class="candle__body"></div>
         </div>
-        <h2 class="name__text">Happy Birthday You Handsome Devil</h2>
+        <h2 class="name__text">Happy Birthday Toe!</h2>
         <p class="name__signature">🎁</p>
       </div>
     </section>
 
-    <!-- Page 4: Message 2 -->
-    <section class="page page--message page--alt" id="page-msg2">
+    <!-- Page 4: Happy Birthday Message -->
+    <section class="page page--finale" id="page-finale">
       <div class="page__content fade-in">
-        <p class="message__text">
-          Have a great day...
-        </p>
-        <p class="message__text message__text--small">
-           but don't do anything I wouldn't do!
+        <h2 class="finale__title">You're one cool mama jamma.</h2>
+        <img
+          class="finale__photo"
+          src="assets/images/20260614_174924.jpg"
+          alt="Your family"
+        />
+        <p class="finale__text">
+          Love from Ryan, Laura, and the Pigs.
         </p>
       </div>
     </section>
@@ -74,13 +81,21 @@
     <!-- Page 5: Hangman Game -->
     <section class="page page--game" id="page-game">
       <div class="page__content fade-in">
-        <p class="game__eyebrow">One more thing before the finale...</p>
+        <p class="game__eyebrow">One last thing...</p>
         <h2 class="game__title">Birthday Hangman</h2>
         <p class="game__intro">
           Guess the secret word one letter at a time. You have 7 wrong guesses.
         </p>
 
-        <div class="hangman" aria-live="polite">
+        <div class="hangman" id="hangman-card" aria-live="polite">
+          <div class="hangman__streamers" id="hangman-streamers" aria-hidden="true">
+            <span class="hangman__streamer hangman__streamer--1"></span>
+            <span class="hangman__streamer hangman__streamer--2"></span>
+            <span class="hangman__streamer hangman__streamer--3"></span>
+            <span class="hangman__streamer hangman__streamer--4"></span>
+            <span class="hangman__streamer hangman__streamer--5"></span>
+            <span class="hangman__streamer hangman__streamer--6"></span>
+          </div>
           <div class="hangman__status" id="hangman-status">Pick a letter to begin.</div>
           <div class="hangman__mistakes">
             Wrong guesses: <span id="hangman-mistakes">0</span>/7
@@ -90,22 +105,6 @@
           <div class="hangman__keyboard" id="hangman-keyboard" aria-label="Hangman letter buttons"></div>
           <button class="hangman__reset" id="hangman-reset" type="button">Play again</button>
         </div>
-      </div>
-    </section>
-
-    <!-- Page 6: Finale -->
-    <section class="page page--finale" id="page-finale">
-      <div class="page__content fade-in">
-        <h2 class="finale__title">Here's to you! 🍻</h2>
-        <img
-          class="finale__photo"
-          src="assets/images/IMG_20230915_180724_edit_19639755110023.jpg"
-          alt="Your family"
-        />
-        <p class="finale__text">
-          Love from your family
-        </p>
-        <p class="finale__emoji">🎉🎊🎈🥳🎂🎉</p>
       </div>
     </section>
 

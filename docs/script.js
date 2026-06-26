@@ -9,6 +9,9 @@
 
   const HANGMAN_WORD = 'mummeltoe';
   const MAX_MISTAKES = 7;
+  const scrollContainer = document.querySelector('.scroll-container');
+  const pages = Array.from(document.querySelectorAll('.page'));
+  const scrollIndicatorEl = document.getElementById('scroll-indicator');
 
   // ── Scroll-fade via Intersection Observer ──────────────────────────────────
   const fadeEls = document.querySelectorAll('.fade-in');
@@ -37,6 +40,7 @@
   const hangmanGuessesEl = document.getElementById('hangman-guesses');
   const hangmanKeyboardEl = document.getElementById('hangman-keyboard');
   const hangmanResetEl = document.getElementById('hangman-reset');
+  const hangmanCardEl = document.getElementById('hangman-card');
 
   let guessedLetters = new Set();
   let mistakes = 0;
@@ -53,6 +57,11 @@
     buildKeyboard();
     resetGame();
     hangmanResetEl.addEventListener('click', resetGame);
+  }
+
+  if (scrollContainer && scrollIndicatorEl) {
+    scrollContainer.addEventListener('scroll', updateScrollIndicator, { passive: true });
+    updateScrollIndicator();
   }
 
   function buildKeyboard() {
@@ -87,6 +96,7 @@
     guessedLetters = new Set();
     mistakes = 0;
     gameOver = false;
+    setHangmanCelebration(false);
     updateGame();
   }
 
@@ -109,11 +119,14 @@
 
     if (solved) {
       gameOver = true;
-      hangmanStatusEl.textContent = 'You got it. MUMMELTOE unlocked the finale.';
+      setHangmanCelebration(true);
+      hangmanStatusEl.textContent = 'You got it. MUMMELTOE solved the birthday challenge.';
     } else if (mistakes >= MAX_MISTAKES) {
       gameOver = true;
+      setHangmanCelebration(false);
       hangmanStatusEl.textContent = 'Out of guesses. The word was MUMMELTOE.';
     } else {
+      setHangmanCelebration(false);
       hangmanStatusEl.textContent = 'Guess the birthday word.';
     }
 
@@ -127,6 +140,26 @@
       const { letter } = button.dataset;
       button.disabled = gameOver || guessedLetters.has(letter);
     });
+  }
+
+  function setHangmanCelebration(isCelebrating) {
+    if (!hangmanCardEl) {
+      return;
+    }
+
+    hangmanCardEl.classList.toggle('hangman--celebrating', isCelebrating);
+  }
+
+  function updateScrollIndicator() {
+    if (!scrollContainer || !scrollIndicatorEl || pages.length === 0) {
+      return;
+    }
+
+    const pageIndex = Math.round(scrollContainer.scrollTop / Math.max(scrollContainer.clientHeight, 1));
+    const lastIndex = pages.length - 1;
+    const isLastPage = pageIndex >= lastIndex;
+
+    scrollIndicatorEl.classList.toggle('scroll-indicator--hidden', isLastPage);
   }
 
   // ── Confetti ───────────────────────────────────────────────────────────────
