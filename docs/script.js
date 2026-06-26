@@ -120,11 +120,11 @@
     if (solved) {
       gameOver = true;
       setHangmanCelebration(true);
-      hangmanStatusEl.textContent = 'You got it. MUMMELTOE solved the birthday challenge.';
+      hangmanStatusEl.textContent = 'Yah done!';
     } else if (mistakes >= MAX_MISTAKES) {
       gameOver = true;
       setHangmanCelebration(false);
-      hangmanStatusEl.textContent = 'Out of guesses. The word was MUMMELTOE.';
+      hangmanStatusEl.textContent = 'Uh oh, what did happen?';
     } else {
       setHangmanCelebration(false);
       hangmanStatusEl.textContent = 'Guess the birthday word.';
