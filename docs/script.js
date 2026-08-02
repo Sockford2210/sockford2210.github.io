@@ -1,17 +1,21 @@
 /* =============================================
    Birthday Message — script.js
    - Intersection Observer for scroll-fade
-  - Canvas confetti burst on page 3 (Name / Candle)
+   - Canvas confetti burst on page 3 (Name / Candle)
+   - Confetti again when the embedded game is solved
+
+   The game itself lives in games/*.html and is fully
+   self-contained; the only contract with it is the
+   'birthday-game:solved' postMessage handled below.
    ============================================= */
 
 (function () {
   'use strict';
 
-  const HANGMAN_WORD = 'mummeltoe';
-  const MAX_MISTAKES = 7;
   const scrollContainer = document.querySelector('.scroll-container');
   const pages = Array.from(document.querySelectorAll('.page'));
   const scrollIndicatorEl = document.getElementById('scroll-indicator');
+  const gameFrameEl = document.getElementById('game-frame');
 
   // ── Scroll-fade via Intersection Observer ──────────────────────────────────
   const fadeEls = document.querySelectorAll('.fade-in');
@@ -22,7 +26,8 @@
         if (entry.isIntersecting) {
           entry.target.classList.add('visible');
           // Trigger confetti when the Name / Candle section becomes visible
-          if (entry.target.closest('#page-name')) {
+          if (entry.target.closest('#page-name') && !nameConfettiFired) {
+            nameConfettiFired = true;
             launchConfetti();
           }
         }
@@ -33,122 +38,23 @@
 
   fadeEls.forEach((el) => observer.observe(el));
 
-  // ── Hangman game ───────────────────────────────────────────────────────────
-  const hangmanWordEl = document.getElementById('hangman-word');
-  const hangmanStatusEl = document.getElementById('hangman-status');
-  const hangmanMistakesEl = document.getElementById('hangman-mistakes');
-  const hangmanGuessesEl = document.getElementById('hangman-guesses');
-  const hangmanKeyboardEl = document.getElementById('hangman-keyboard');
-  const hangmanResetEl = document.getElementById('hangman-reset');
-  const hangmanCardEl = document.getElementById('hangman-card');
-
-  let guessedLetters = new Set();
-  let mistakes = 0;
-  let gameOver = false;
-
-  if (
-    hangmanWordEl &&
-    hangmanStatusEl &&
-    hangmanMistakesEl &&
-    hangmanGuessesEl &&
-    hangmanKeyboardEl &&
-    hangmanResetEl
-  ) {
-    buildKeyboard();
-    resetGame();
-    hangmanResetEl.addEventListener('click', resetGame);
-  }
-
   if (scrollContainer && scrollIndicatorEl) {
     scrollContainer.addEventListener('scroll', updateScrollIndicator, { passive: true });
     updateScrollIndicator();
   }
 
-  function buildKeyboard() {
-    const letters = 'abcdefghijklmnopqrstuvwxyz'.split('');
-
-    letters.forEach((letter) => {
-      const button = document.createElement('button');
-      button.type = 'button';
-      button.className = 'hangman__key';
-      button.textContent = letter.toUpperCase();
-      button.dataset.letter = letter;
-      button.addEventListener('click', () => handleGuess(letter));
-      hangmanKeyboardEl.appendChild(button);
-    });
-  }
-
-  function handleGuess(letter) {
-    if (gameOver || guessedLetters.has(letter)) {
+  // ── Embedded game ──────────────────────────────────────────────────────────
+  // Celebrate when the game in the iframe reports a win. We only trust messages
+  // that came from our own frame, so the origin doesn't need checking.
+  window.addEventListener('message', (event) => {
+    if (!gameFrameEl || event.source !== gameFrameEl.contentWindow) {
       return;
     }
 
-    guessedLetters.add(letter);
-
-    if (!HANGMAN_WORD.includes(letter)) {
-      mistakes += 1;
+    if (event.data && event.data.type === 'birthday-game:solved') {
+      launchConfetti();
     }
-
-    updateGame();
-  }
-
-  function resetGame() {
-    guessedLetters = new Set();
-    mistakes = 0;
-    gameOver = false;
-    setHangmanCelebration(false);
-    updateGame();
-  }
-
-  function updateGame() {
-    const solved = HANGMAN_WORD.split('').every((letter) => guessedLetters.has(letter));
-    const guessedList = Array.from(guessedLetters).sort();
-
-    hangmanWordEl.innerHTML = HANGMAN_WORD
-      .split('')
-      .map((letter) => {
-        const revealed = guessedLetters.has(letter) || gameOver;
-        return '<span class="hangman__letter">' + (revealed ? letter.toUpperCase() : '&nbsp;') + '</span>';
-      })
-      .join('');
-
-    hangmanMistakesEl.textContent = String(mistakes);
-    hangmanGuessesEl.textContent = guessedList.length
-      ? 'Guessed letters: ' + guessedList.map((letter) => letter.toUpperCase()).join(', ')
-      : 'Guessed letters: none yet';
-
-    if (solved) {
-      gameOver = true;
-      setHangmanCelebration(true);
-      hangmanStatusEl.textContent = 'Yah done!';
-    } else if (mistakes >= MAX_MISTAKES) {
-      gameOver = true;
-      setHangmanCelebration(false);
-      hangmanStatusEl.textContent = 'Uh oh, what did happen?';
-    } else {
-      setHangmanCelebration(false);
-      hangmanStatusEl.textContent = 'Guess the birthday word.';
-    }
-
-    updateKeyboardState();
-  }
-
-  function updateKeyboardState() {
-    const keys = hangmanKeyboardEl.querySelectorAll('.hangman__key');
-
-    keys.forEach((button) => {
-      const { letter } = button.dataset;
-      button.disabled = gameOver || guessedLetters.has(letter);
-    });
-  }
-
-  function setHangmanCelebration(isCelebrating) {
-    if (!hangmanCardEl) {
-      return;
-    }
-
-    hangmanCardEl.classList.toggle('hangman--celebrating', isCelebrating);
-  }
+  });
 
   function updateScrollIndicator() {
     if (!scrollContainer || !scrollIndicatorEl || pages.length === 0) {
@@ -163,7 +69,8 @@
   }
 
   // ── Confetti ───────────────────────────────────────────────────────────────
-  let confettiRunning = false;
+  let confettiRunning = false;   // an animation is currently in flight
+  let nameConfettiFired = false; // page 3 only ever bursts once
 
   function launchConfetti() {
     if (confettiRunning) return;
@@ -232,6 +139,7 @@
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.globalAlpha = 1;
         cancelAnimationFrame(frame);
+        confettiRunning = false;   // allow a later burst (e.g. solving the game)
       }
     }
 

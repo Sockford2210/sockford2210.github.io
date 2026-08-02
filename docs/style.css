@@ -259,180 +259,26 @@ body {
 }
 
 /* =============================================
-   HANGMAN PAGE
+   GAME PAGE
+   The game itself lives in games/*.html and is
+   embedded as an iframe, so all of its styling
+   is inside that file. Only the frame is sized here.
    ============================================= */
-.game__eyebrow {
-  font-size: clamp(0.82rem, 2.8vw, 1.1rem);
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  color: var(--color-muted);
-  margin-bottom: 0.35rem;
+.page--game {
+  padding: 0.75rem;
 }
 
-.game__title {
-  font-family: var(--font-display);
-  font-size: clamp(2rem, 8.5vw, 4.2rem);
-  color: var(--color-accent);
-  line-height: 0.95;
-  margin-bottom: 0.45rem;
-}
-
-.game__intro {
-  font-size: clamp(0.95rem, 3.3vw, 1.2rem);
-  line-height: 1.45;
-  color: var(--color-text);
-  margin: 0 auto 0.9rem;
-  max-width: 24rem;
-}
-
-.hangman {
-  position: relative;
-  overflow: hidden;
-  background: rgba(255, 250, 240, 0.72);
-  border: 2px solid rgba(26, 82, 118, 0.14);
-  border-radius: 1.5rem;
-  box-shadow: 0 16px 40px rgba(26, 82, 118, 0.12);
-  padding: 0.95rem 0.9rem;
-  backdrop-filter: blur(6px);
-}
-
-.hangman--celebrating {
-  box-shadow: 0 18px 44px rgba(255, 105, 135, 0.18);
-}
-
-.hangman__streamers {
-  position: absolute;
-  inset: 0 0 auto 0;
-  height: 4.5rem;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.35s ease;
-}
-
-.hangman--celebrating .hangman__streamers {
-  opacity: 1;
-}
-
-.hangman__streamer {
-  position: absolute;
-  top: -1rem;
-  width: 0.8rem;
-  height: 5rem;
-  border-radius: 999px;
-  transform-origin: top center;
-  animation: streamerSwing 1.8s ease-in-out infinite alternate;
-}
-
-.hangman__streamer::after {
-  content: '';
-  position: absolute;
-  inset: auto 0 -0.85rem 0;
-  width: 100%;
-  height: 1.1rem;
-  border-radius: 999px;
-  background: inherit;
-  filter: brightness(1.03);
-}
-
-.hangman__streamer--1 { left: 10%; background: linear-gradient(180deg, #ff8fb1, #ffb3c9); animation-delay: 0s; }
-.hangman__streamer--2 { left: 24%; background: linear-gradient(180deg, #f9d65c, #ffe89a); animation-delay: 0.2s; }
-.hangman__streamer--3 { left: 38%; background: linear-gradient(180deg, #75d7ff, #b4ecff); animation-delay: 0.1s; }
-.hangman__streamer--4 { left: 56%; background: linear-gradient(180deg, #ff9dc0, #ffd4e2); animation-delay: 0.28s; }
-.hangman__streamer--5 { left: 72%; background: linear-gradient(180deg, #ffd95f, #fff0ab); animation-delay: 0.15s; }
-.hangman__streamer--6 { left: 86%; background: linear-gradient(180deg, #7dcfff, #d4f3ff); animation-delay: 0.35s; }
-
-@keyframes streamerSwing {
-  0% { transform: rotate(-12deg) translateY(0); }
-  50% { transform: rotate(0deg) translateY(0.2rem); }
-  100% { transform: rotate(12deg) translateY(-0.1rem); }
-}
-
-.hangman__status,
-.hangman__mistakes,
-.hangman__guesses {
-  font-size: clamp(0.95rem, 3.2vw, 1.15rem);
-  line-height: 1.6;
-}
-
-.hangman__status {
-  min-height: 2.2rem;
-  font-weight: 400;
-  color: var(--color-accent);
-}
-
-.hangman--celebrating .hangman__status {
-  margin-top: 2.9rem;
-}
-
-.hangman__mistakes {
-  margin-top: 0.25rem;
-  color: var(--color-muted);
-}
-
-.hangman__word {
+.page--game .page__content {
+  height: 100%;
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 0.4rem;
-  margin: 0.85rem 0;
 }
 
-.hangman__letter {
-  min-width: 1.6rem;
-  padding-bottom: 0.15rem;
-  border-bottom: 3px solid rgba(26, 82, 118, 0.45);
-  font-size: clamp(1.2rem, 5vw, 1.8rem);
-  font-weight: 700;
-  color: var(--color-text);
-  text-transform: uppercase;
-}
-
-.hangman__guesses {
-  min-height: 2.2rem;
-  color: var(--color-muted);
-  margin-bottom: 0.75rem;
-}
-
-.hangman__keyboard {
-  display: grid;
-  grid-template-columns: repeat(7, minmax(0, 1fr));
-  gap: 0.4rem;
-}
-
-.hangman__key,
-.hangman__reset {
+.game__frame {
+  flex: 1 1 auto;
+  width: 100%;
   border: 0;
-  border-radius: 999px;
-  font: inherit;
-}
-
-.hangman__key {
-  min-height: 2.25rem;
-  background: #ffffff;
-  color: var(--color-accent);
-  font-size: 0.92rem;
-  font-weight: 700;
-  box-shadow: 0 8px 18px rgba(26, 82, 118, 0.12);
-}
-
-.hangman__key:disabled {
-  background: rgba(255, 255, 255, 0.55);
-  color: rgba(26, 82, 118, 0.55);
-  box-shadow: none;
-}
-
-.hangman__reset {
-  margin-top: 0.75rem;
-  padding: 0.7rem 1.25rem;
-  background: var(--color-accent);
-  color: #fffaf6;
-  font-weight: 700;
-}
-
-.hangman__key:focus-visible,
-.hangman__reset:focus-visible {
-  outline: 3px solid rgba(255, 105, 135, 0.45);
-  outline-offset: 2px;
+  background: transparent;
+  color-scheme: normal;   /* don't inherit a dark UA theme into the frame */
 }
 
 /* =============================================
@@ -486,12 +332,8 @@ body {
     bottom: 1.35rem;
   }
 
-  .hangman {
-    padding: 1.75rem;
-  }
-
-  .hangman__keyboard {
-    grid-template-columns: repeat(9, minmax(0, 1fr));
+  .page--game {
+    padding: 1.25rem;
   }
 
   .balloon--1 { font-size: 2.5rem; }

@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Lato:wght@300;400&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css?v=1.4" />
+  <link rel="stylesheet" href="style.css?v=1.5" />
 </head>
 <body>
 
@@ -78,30 +78,16 @@
       </div>
     </section>
 
-    <!-- Page 5: Hangman Game -->
+    <!-- Page 5: Game — swap the iframe src to change games (see games/) -->
     <section class="page page--game" id="page-game">
       <div class="page__content fade-in">
-        <p class="game__eyebrow">One last thing...</p>
-        <h2 class="game__title">Birthday Hangman</h2>
-
-        <div class="hangman" id="hangman-card" aria-live="polite">
-          <div class="hangman__streamers" id="hangman-streamers" aria-hidden="true">
-            <span class="hangman__streamer hangman__streamer--1"></span>
-            <span class="hangman__streamer hangman__streamer--2"></span>
-            <span class="hangman__streamer hangman__streamer--3"></span>
-            <span class="hangman__streamer hangman__streamer--4"></span>
-            <span class="hangman__streamer hangman__streamer--5"></span>
-            <span class="hangman__streamer hangman__streamer--6"></span>
-          </div>
-          <div class="hangman__status" id="hangman-status">Pick a letter to begin.</div>
-          <div class="hangman__mistakes">
-            Wrong guesses: <span id="hangman-mistakes">0</span>/7
-          </div>
-          <div class="hangman__word" id="hangman-word" aria-label="Hidden word"></div>
-          <div class="hangman__guesses" id="hangman-guesses">Guessed letters: none yet</div>
-          <div class="hangman__keyboard" id="hangman-keyboard" aria-label="Hangman letter buttons"></div>
-          <button class="hangman__reset" id="hangman-reset" type="button">Play again</button>
-        </div>
+        <iframe
+          class="game__frame"
+          id="game-frame"
+          src="games/crossword.html"
+          title="Birthday Crossword"
+          loading="lazy"
+        ></iframe>
       </div>
     </section>
 

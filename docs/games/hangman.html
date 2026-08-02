@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Birthday Hangman</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet" />
+
+  <style>
+    /* =============================================
+       BIRTHDAY HANGMAN — standalone game page
+       Not currently referenced by ../index.html. To
+       put it back, point the game iframe's src here.
+       ============================================= */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --color-bg-yellow: #fff3b8;
+      --color-bg-sky:    #edf8ff;
+      --color-accent:    #1a5276;
+      --color-text:      #1a0a14;
+      --color-muted:     #4a2040;
+      --font-display:    'Dancing Script', cursive;
+      --font-body:       'Lato', sans-serif;
+    }
+
+    html {
+      font-size: 16px;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+      min-height: 100dvh;
+      padding: 0.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      font-family: var(--font-body);
+      color: var(--color-text);
+      background: linear-gradient(160deg, var(--color-bg-yellow), var(--color-bg-sky));
+      overflow-y: auto;
+      text-align: center;
+    }
+
+    /* When inside the iframe, let the parent page's gradient show through. */
+    html.is-embedded,
+    html.is-embedded body {
+      background: transparent;
+    }
+
+    .game__wrap {
+      width: 100%;
+      max-width: 32rem;
+      margin: 0 auto;
+    }
+
+    .game__eyebrow {
+      font-size: clamp(0.7rem, 2.8vw, 0.9rem);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--color-muted);
+      margin-bottom: 0.35rem;
+    }
+
+    .game__title {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 8.5vw, 3.4rem);
+      color: var(--color-accent);
+      line-height: 0.95;
+      margin-bottom: 0.45rem;
+    }
+
+    /* =============================================
+       HANGMAN CARD
+       ============================================= */
+    .hangman {
+      position: relative;
+      overflow: hidden;
+      background: rgba(255, 250, 240, 0.72);
+      border: 2px solid rgba(26, 82, 118, 0.14);
+      border-radius: 1.5rem;
+      box-shadow: 0 16px 40px rgba(26, 82, 118, 0.12);
+      padding: 0.95rem 0.9rem;
+      backdrop-filter: blur(6px);
+    }
+
+    .hangman--celebrating {
+      box-shadow: 0 18px 44px rgba(255, 105, 135, 0.18);
+    }
+
+    .hangman__streamers {
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 4.5rem;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.35s ease;
+    }
+
+    .hangman--celebrating .hangman__streamers {
+      opacity: 1;
+    }
+
+    .hangman__streamer {
+      position: absolute;
+      top: -1rem;
+      width: 0.8rem;
+      height: 5rem;
+      border-radius: 999px;
+      transform-origin: top center;
+      animation: streamerSwing 1.8s ease-in-out infinite alternate;
+    }
+
+    .hangman__streamer::after {
+      content: '';
+      position: absolute;
+      inset: auto 0 -0.85rem 0;
+      width: 100%;
+      height: 1.1rem;
+      border-radius: 999px;
+      background: inherit;
+      filter: brightness(1.03);
+    }
+
+    .hangman__streamer--1 { left: 10%; background: linear-gradient(180deg, #ff8fb1, #ffb3c9); animation-delay: 0s; }
+    .hangman__streamer--2 { left: 24%; background: linear-gradient(180deg, #f9d65c, #ffe89a); animation-delay: 0.2s; }
+    .hangman__streamer--3 { left: 38%; background: linear-gradient(180deg, #75d7ff, #b4ecff); animation-delay: 0.1s; }
+    .hangman__streamer--4 { left: 56%; background: linear-gradient(180deg, #ff9dc0, #ffd4e2); animation-delay: 0.28s; }
+    .hangman__streamer--5 { left: 72%; background: linear-gradient(180deg, #ffd95f, #fff0ab); animation-delay: 0.15s; }
+    .hangman__streamer--6 { left: 86%; background: linear-gradient(180deg, #7dcfff, #d4f3ff); animation-delay: 0.35s; }
+
+    @keyframes streamerSwing {
+      0%   { transform: rotate(-12deg) translateY(0); }
+      50%  { transform: rotate(0deg) translateY(0.2rem); }
+      100% { transform: rotate(12deg) translateY(-0.1rem); }
+    }
+
+    .hangman__status,
+    .hangman__mistakes,
+    .hangman__guesses {
+      font-size: clamp(0.95rem, 3.2vw, 1.15rem);
+      line-height: 1.6;
+    }
+
+    .hangman__status {
+      min-height: 2.2rem;
+      font-weight: 400;
+      color: var(--color-accent);
+    }
+
+    .hangman--celebrating .hangman__status {
+      margin-top: 2.9rem;
+    }
+
+    .hangman__mistakes {
+      margin-top: 0.25rem;
+      color: var(--color-muted);
+    }
+
+    .hangman__word {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.4rem;
+      margin: 0.85rem 0;
+    }
+
+    .hangman__letter {
+      min-width: 1.6rem;
+      padding-bottom: 0.15rem;
+      border-bottom: 3px solid rgba(26, 82, 118, 0.45);
+      font-size: clamp(1.2rem, 5vw, 1.8rem);
+      font-weight: 700;
+      color: var(--color-text);
+      text-transform: uppercase;
+    }
+
+    .hangman__guesses {
+      min-height: 2.2rem;
+      color: var(--color-muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .hangman__keyboard {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: 0.4rem;
+    }
+
+    .hangman__key,
+    .hangman__reset {
+      border: 0;
+      border-radius: 999px;
+      font: inherit;
+      cursor: pointer;
+    }
+
+    .hangman__key {
+      min-height: 2.25rem;
+      background: #ffffff;
+      color: var(--color-accent);
+      font-size: 0.92rem;
+      font-weight: 700;
+      box-shadow: 0 8px 18px rgba(26, 82, 118, 0.12);
+    }
+
+    .hangman__key:disabled {
+      background: rgba(255, 255, 255, 0.55);
+      color: rgba(26, 82, 118, 0.55);
+      box-shadow: none;
+    }
+
+    .hangman__reset {
+      margin-top: 0.75rem;
+      padding: 0.7rem 1.25rem;
+      background: var(--color-accent);
+      color: #fffaf6;
+      font-weight: 700;
+    }
+
+    .hangman__key:focus-visible,
+    .hangman__reset:focus-visible {
+      outline: 3px solid rgba(255, 105, 135, 0.45);
+      outline-offset: 2px;
+    }
+
+    /* =============================================
+       TABLET & LARGER
+       ============================================= */
+    @media (min-width: 600px) {
+      .hangman {
+        padding: 1.75rem;
+      }
+
+      .hangman__keyboard {
+        grid-template-columns: repeat(9, minmax(0, 1fr));
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { transition: none !important; animation: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="game__wrap">
+    <p class="game__eyebrow">One last thing...</p>
+    <h1 class="game__title">Birthday Hangman</h1>
+
+    <div class="hangman" id="hangman-card" aria-live="polite">
+      <div class="hangman__streamers" id="hangman-streamers" aria-hidden="true">
+        <span class="hangman__streamer hangman__streamer--1"></span>
+        <span class="hangman__streamer hangman__streamer--2"></span>
+        <span class="hangman__streamer hangman__streamer--3"></span>
+        <span class="hangman__streamer hangman__streamer--4"></span>
+        <span class="hangman__streamer hangman__streamer--5"></span>
+        <span class="hangman__streamer hangman__streamer--6"></span>
+      </div>
+      <div class="hangman__status" id="hangman-status">Pick a letter to begin.</div>
+      <div class="hangman__mistakes">
+        Wrong guesses: <span id="hangman-mistakes">0</span>/7
+      </div>
+      <div class="hangman__word" id="hangman-word" aria-label="Hidden word"></div>
+      <div class="hangman__guesses" id="hangman-guesses">Guessed letters: none yet</div>
+      <div class="hangman__keyboard" id="hangman-keyboard" aria-label="Hangman letter buttons"></div>
+      <button class="hangman__reset" id="hangman-reset" type="button">Play again</button>
+    </div>
+  </div>
+
+  <script>
+  (function () {
+    'use strict';
+
+    const HANGMAN_WORD = 'mummeltoe';
+    const MAX_MISTAKES = 7;
+
+    const hangmanWordEl     = document.getElementById('hangman-word');
+    const hangmanStatusEl   = document.getElementById('hangman-status');
+    const hangmanMistakesEl = document.getElementById('hangman-mistakes');
+    const hangmanGuessesEl  = document.getElementById('hangman-guesses');
+    const hangmanKeyboardEl = document.getElementById('hangman-keyboard');
+    const hangmanResetEl    = document.getElementById('hangman-reset');
+    const hangmanCardEl     = document.getElementById('hangman-card');
+
+    let guessedLetters = new Set();
+    let mistakes = 0;
+    let gameOver = false;
+    let announced = false;
+
+    buildKeyboard();
+    resetGame();
+    hangmanResetEl.addEventListener('click', resetGame);
+
+    function buildKeyboard() {
+      const letters = 'abcdefghijklmnopqrstuvwxyz'.split('');
+
+      letters.forEach((letter) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'hangman__key';
+        button.textContent = letter.toUpperCase();
+        button.dataset.letter = letter;
+        button.addEventListener('click', () => handleGuess(letter));
+        hangmanKeyboardEl.appendChild(button);
+      });
+    }
+
+    function handleGuess(letter) {
+      if (gameOver || guessedLetters.has(letter)) {
+        return;
+      }
+
+      guessedLetters.add(letter);
+
+      if (!HANGMAN_WORD.includes(letter)) {
+        mistakes += 1;
+      }
+
+      updateGame();
+    }
+
+    function resetGame() {
+      guessedLetters = new Set();
+      mistakes = 0;
+      gameOver = false;
+      announced = false;
+      setHangmanCelebration(false);
+      updateGame();
+    }
+
+    function updateGame() {
+      const solved = HANGMAN_WORD.split('').every((letter) => guessedLetters.has(letter));
+      const guessedList = Array.from(guessedLetters).sort();
+
+      hangmanWordEl.innerHTML = HANGMAN_WORD
+        .split('')
+        .map((letter) => {
+          const revealed = guessedLetters.has(letter) || gameOver;
+          return '<span class="hangman__letter">' + (revealed ? letter.toUpperCase() : '&nbsp;') + '</span>';
+        })
+        .join('');
+
+      hangmanMistakesEl.textContent = String(mistakes);
+      hangmanGuessesEl.textContent = guessedList.length
+        ? 'Guessed letters: ' + guessedList.map((letter) => letter.toUpperCase()).join(', ')
+        : 'Guessed letters: none yet';
+
+      if (solved) {
+        gameOver = true;
+        setHangmanCelebration(true);
+        hangmanStatusEl.textContent = 'Yah done!';
+        announceSolved();
+      } else if (mistakes >= MAX_MISTAKES) {
+        gameOver = true;
+        setHangmanCelebration(false);
+        hangmanStatusEl.textContent = 'Uh oh, what did happen?';
+      } else {
+        setHangmanCelebration(false);
+        hangmanStatusEl.textContent = 'Guess the birthday word.';
+      }
+
+      updateKeyboardState();
+    }
+
+    function updateKeyboardState() {
+      const keys = hangmanKeyboardEl.querySelectorAll('.hangman__key');
+
+      keys.forEach((button) => {
+        const { letter } = button.dataset;
+        button.disabled = gameOver || guessedLetters.has(letter);
+      });
+    }
+
+    function setHangmanCelebration(isCelebrating) {
+      hangmanCardEl.classList.toggle('hangman--celebrating', isCelebrating);
+    }
+
+    // Ask the parent page for a confetti burst. The parent verifies the message
+    // came from its own frame before acting.
+    function announceSolved() {
+      if (announced || window.self === window.top) return;
+      announced = true;
+      try {
+        window.parent.postMessage({ type: 'birthday-game:solved', game: 'hangman' }, '*');
+      } catch (err) {
+        /* embedded cross-origin — no confetti, no harm */
+      }
+    }
+
+    if (window.self !== window.top) {
+      document.documentElement.classList.add('is-embedded');
+    }
+  })();
+  </script>
+</body>
+</html>
