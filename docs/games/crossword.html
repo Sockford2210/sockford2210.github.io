@@ -29,11 +29,14 @@
       --font-display:    'Dancing Script', cursive;
       --font-body:       'Lato', sans-serif;
 
-      /* Cell size is capped by width, height and an absolute max, so the whole
-         game fits a small phone without scrolling. The vh term only bites on
-         short screens; on roomier ones the width or the 2.4rem cap wins. */
-      --cell: min(9vw, 4.05vh, 2.4rem);
-      --cols: 9;
+      /* The grid is 16 columns wide, so width is what limits the squares.
+         Derive the cell size from the actual column count and the space the
+         card really has, so any grid fits by construction. The vh term only
+         bites in landscape; the rem cap stops it ballooning on a tablet. */
+      --card-max: 44rem;
+      --avail: min(calc(100vw - 1.9rem), calc(var(--card-max) - 1.1rem));
+      --cell: min(calc(var(--avail) / var(--cols)), 7vh, 3.2rem);
+      --cols: 16;
     }
 
     html {
@@ -64,7 +67,7 @@
        ============================================= */
     .game {
       width: 100%;
-      max-width: 32rem;
+      max-width: var(--card-max);
       margin: 0 auto;
       display: flex;
       flex-direction: column;
@@ -114,10 +117,11 @@
     /* =============================================
        GRID
        ============================================= */
+    /* No gap: squares butt together into a continuous grid, the way a printed
+       crossword looks — and at 16 columns the gaps were costing real width. */
     .grid {
       display: grid;
       grid-template-columns: repeat(var(--cols), var(--cell));
-      gap: 2px;
       justify-content: center;
     }
 
@@ -125,7 +129,6 @@
       position: relative;
       width: var(--cell);
       height: var(--cell);
-      border-radius: 3px;
     }
 
     .cell--block {
@@ -140,7 +143,7 @@
       border: 1px solid rgba(26, 82, 118, 0.35);
       background: #ffffff;
       font-family: inherit;
-      font-size: calc(var(--cell) * 0.58);
+      font-size: calc(var(--cell) * 0.62);
       font-weight: 700;
       line-height: 1;
       color: var(--color-text);
@@ -150,9 +153,9 @@
 
     .cell__num {
       position: absolute;
-      top: 1px;
-      left: 2px;
-      font-size: calc(var(--cell) * 0.3);
+      top: 0;
+      left: 1px;
+      font-size: calc(var(--cell) * 0.34);
       font-weight: 700;
       line-height: 1;
       color: var(--color-muted);
@@ -247,7 +250,7 @@
     .key {
       flex: 1 1 0;
       min-width: 0;
-      height: clamp(1.8rem, 5vh, 2.5rem);
+      height: clamp(2.1rem, 7vh, 3rem);
       border: 0;
       border-radius: 0.4rem;
       background: #ffffff;
@@ -318,8 +321,6 @@
        TABLET & LARGER
        ============================================= */
     @media (min-width: 600px) {
-      :root { --cell: min(6.5vw, 5vh, 2.9rem); }
-
       .game {
         gap: 0.7rem;
         padding: 1.1rem 1rem 1.25rem;
@@ -363,35 +364,44 @@
     'use strict';
 
     /* =========================================================================
-       PLACEHOLDER PUZZLE
+       PUZZLE
        -------------------------------------------------------------------------
-       Eight interlocking words. Swap `word` and `clue` for the real ones; the
-       row/col/dir coordinates are what make the grid interlock, so if the real
-       words differ in length or shared letters the coordinates must change too.
-       Clue numbers, the grid size and the blocked squares are all derived from
-       this array at runtime — nothing else needs editing.
+       Words and clues come from data/BirthdayCrosswordCluesAndWords.csv.
+       `word` is the answer with spaces stripped (that is what goes in the
+       squares); `display` keeps the real spacing and is only used to show the
+       enumeration, e.g. San Diego -> (3,5).
 
-           0 1 2 3 4 5 6 7 8
-        0  . . . W . . . . .
-        1  F A M I L Y . . .
-        2  . . . S . . . . .
-        3  . . . H . C A K E
-        4  . . . E . A . . .
-        5  P R E S E N T . .
-        6  A . . . . D . L .
-        7  R . B A L L O O N
-        8  T . . . . E . V .
-        9  Y . . . . S . E .
+       The row/col/dir coordinates are what make the grid interlock, so they
+       cannot be edited independently of the words. Grid size, blocked squares
+       and clue numbers are all derived from this array at runtime.
+
+            0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5
+         0  . . S . . . . . . . . . . . . .
+         1  G R A V Y . . T H E J E S U S .
+         2  . . N . . . . I . . . . . . . .
+         3  . . D . . . . T . . L . . . . .
+         4  . . I . . . . T . B A L L F R O
+         5  . . E . L E N I N . N . . . . .
+         6  . . G . . . . E . . C . . . . .
+         7  G O O D H O U S E K E E P I N G
        ========================================================================= */
     const ENTRIES = [
-      { word: 'WISHES',  row: 0, col: 3, dir: 'down',   clue: 'What you make before blowing out the candles.' },
-      { word: 'FAMILY',  row: 1, col: 0, dir: 'across', clue: 'The people in the photo a few pages back.' },
-      { word: 'CAKE',    row: 3, col: 5, dir: 'across', clue: 'Sponge, icing, and a candle on top.' },
-      { word: 'CANDLES', row: 3, col: 5, dir: 'down',   clue: 'You blow these out (there are rather a lot this year).' },
-      { word: 'PRESENT', row: 5, col: 0, dir: 'across', clue: 'Wrapped in paper and tied with a bow.' },
-      { word: 'PARTY',   row: 5, col: 0, dir: 'down',   clue: 'A celebration with music, food and silly hats.' },
-      { word: 'LOVE',    row: 6, col: 7, dir: 'down',   clue: 'What this whole page is made of.' },
-      { word: 'BALLOON', row: 7, col: 2, dir: 'across', clue: 'Full of air and floating on a string.' }
+      { word: 'SANDIEGO', display: 'San Diego', row: 0, col: 2, dir: 'down',
+        clue: "\"Go F yourself _\", hint: Normally they 'stay classy'" },
+      { word: 'GRAVY', display: 'Gravy', row: 1, col: 0, dir: 'across',
+        clue: 'What might one swallow after cradling the balls, stroking the shaft and working the pipe? The _' },
+      { word: 'THEJESUS', display: 'The Jesus', row: 1, col: 7, dir: 'across',
+        clue: "Nobody Fs with him, and '8 Year olds dude...'" },
+      { word: 'TITTIES', display: 'Titties', row: 1, col: 7, dir: 'down',
+        clue: '_ and Jazz' },
+      { word: 'LANCE', display: 'Lance', row: 3, col: 10, dir: 'down',
+        clue: "Who's forehead should Alpa Chino dangle his dice on?" },
+      { word: 'BALLFRO', display: 'Ball Fro', row: 4, col: 9, dir: 'across',
+        clue: "A 'lucsious V of chest hair' typically starts at the chest pubes and finishes at the _?" },
+      { word: 'LENIN', display: 'Lenin', row: 5, col: 4, dir: 'across',
+        clue: 'Vladimir Ilyich Ulyanov _' },
+      { word: 'GOODHOUSEKEEPING', display: 'Good Housekeeping', row: 7, col: 0, dir: 'across',
+        clue: 'Favourite non-pornagraphic magazine to masturbate to?' }
     ];
 
     const KB_ROWS = ['QWERTYUIOP', 'ASDFGHJKL', 'ZXCVBNM'];
@@ -716,6 +726,15 @@
       statusEl.textContent = text;
     }
 
+    // Spaces are stripped from the squares, so show the usual crossword
+    // enumeration to say where the word breaks fall: San Diego -> (3,5).
+    function enumerationOf(entry) {
+      const parts = (entry.display || entry.word).trim().split(/\s+/);
+      return parts.length > 1
+        ? '(' + parts.map(function (p) { return p.length; }).join(',') + ')'
+        : entry.word.length + ' letters';
+    }
+
     function render() {
       const activeIndex = currentEntryIndex();
       const inEntry = {};
@@ -743,7 +762,7 @@
       if (activeIndex !== null && activeIndex !== undefined) {
         const entry = ENTRIES[activeIndex];
         clueLabelEl.textContent = entry.number + ' ' + (entry.dir === 'across' ? 'Across' : 'Down') +
-          ' · ' + entry.word.length + ' letters';
+          ' · ' + enumerationOf(entry);
         clueBodyEl.textContent = entry.clue;
       } else if (solved) {
         clueLabelEl.textContent = 'Finished';
