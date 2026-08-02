@@ -82,11 +82,14 @@ body {
 /* =============================================
    FLOATING BALLOONS
    ============================================= */
+/* Sits inside .scroll-container (see index.html). z-index 1 puts it above the
+   page gradients, which are painted by .page at z-index auto, while
+   .page__content at z-index 2 keeps every balloon behind the text. */
 .balloons {
   position: fixed;
   inset: 0;
   pointer-events: none;
-  z-index: 0;
+  z-index: 1;
   overflow: hidden;
 }
 
@@ -149,6 +152,8 @@ body {
 .page--finale  { background: linear-gradient(160deg, var(--color-bg-sky), var(--color-bg-mint)); }
 
 .page__content {
+  position: relative;
+  z-index: 2;      /* keeps text and the game frame above the balloon layer */
   max-width: 600px;
   width: 100%;
 }

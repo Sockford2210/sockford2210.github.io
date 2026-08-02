@@ -7,19 +7,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Lato:wght@300;400&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css?v=1.6" />
+  <link rel="stylesheet" href="style.css?v=1.7" />
 </head>
 <body>
-
-  <!-- Floating balloons (shared background layer) -->
-  <div class="balloons" aria-hidden="true">
-    <div class="balloon balloon--1">🎈</div>
-    <div class="balloon balloon--2">🎈</div>
-    <div class="balloon balloon--3">🎈</div>
-    <div class="balloon balloon--4">🎈</div>
-    <div class="balloon balloon--5">🎈</div>
-    <div class="balloon balloon--6">🎈</div>
-  </div>
 
   <!-- Confetti canvas (triggered on page 3: Name / Candle) -->
   <canvas id="confetti-canvas" aria-hidden="true"></canvas>
@@ -30,6 +20,22 @@
 
   <!-- Scroll container -->
   <main class="scroll-container">
+
+    <!--
+      Floating balloons (shared background layer). This lives inside the
+      scroll container on purpose: the container is its own stacking context,
+      so a balloon layer outside it can only sit wholly behind every page
+      (hidden by the opaque page gradients) or wholly in front of the text.
+      In here it can sit between the two.
+    -->
+    <div class="balloons" aria-hidden="true">
+      <div class="balloon balloon--1">🎈</div>
+      <div class="balloon balloon--2">🎈</div>
+      <div class="balloon balloon--3">🎈</div>
+      <div class="balloon balloon--4">🎈</div>
+      <div class="balloon balloon--5">🎈</div>
+      <div class="balloon balloon--6">🎈</div>
+    </div>
 
     <!-- Page 1: Intro -->
     <section class="page page--intro" id="page-intro">
