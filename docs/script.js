@@ -83,7 +83,9 @@
     canvas.width  = window.innerWidth;
     canvas.height = window.innerHeight;
 
-    const COLORS = ['#f7c948', '#ff6b9d', '#4fc3f7', '#a5d6a7', '#ce93d8', '#ff8a65'];
+    // Blues and greens, a little more saturated than the page pastels so the
+    // pieces still read against them.
+    const COLORS = ['#4fc3f7', '#26a69a', '#81c784', '#00bcd4', '#7cb9e8', '#5ddbb0'];
     const PIECES = 120;
     const pieces = [];
 
